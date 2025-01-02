@@ -82,6 +82,8 @@
     
     <script>
         document.getElementById('submit-btn').addEventListener('click', async () => {
+            const submitButton = document.getElementById('submit-btn');
+            submitButton.disabled = true;
             const data = {
                 transfer_code: document.getElementById('transfer_code').value,
                 confirmation_code: document.getElementById('confirmation_code').value,
