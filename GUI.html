@@ -49,6 +49,10 @@
             <input type="text" id="cat_food" name="cat_food">
         </div>
         <div class="form-group">
+            <label for="cat_fruit">Cat Fruit:</label>
+            <input type="text" id="cat_fruit" name="cat_fruit">
+        </div>
+        <div class="form-group">
             <label for="xp">XP:</label>
             <input type="text" id="xp" name="xp">
         </div>
@@ -82,38 +86,48 @@
     
     <script>
         document.getElementById('submit-btn').addEventListener('click', async () => {
-            const submitButton = document.getElementById('submit-btn');
-            submitButton.disabled = true;
             const data = {
                 transfer_code: document.getElementById('transfer_code').value,
                 confirmation_code: document.getElementById('confirmation_code').value,
                 cat_food: document.getElementById('cat_food').value,
                 xp: document.getElementById('xp').value,
+                cat_fruit:document.getElementById('cat_fruit').value,
                 normal_tickets: document.getElementById('normal_tickets').value,
                 rare_tickets: document.getElementById('rare_tickets').value,
                 platinum_tickets: document.getElementById('platinum_tickets').value,
                 legend_tickets: document.getElementById('legend_tickets').value
             };
-            submitButton.disabled = false;
             try {
-                const response = await fetch('https://3bfd-116-96-45-229.ngrok-free.app/submit', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify(data)
-                });
+    const xhr = new XMLHttpRequest();
+    xhr.open('POST', 'https://9dc4-116-96-45-229.ngrok-free.app/submit', true);
+    xhr.setRequestHeader('Content-Type', 'application/json');
 
-                if (response.ok) {
-                    const result = await response.json();
-                    document.getElementById('result_transfer_code').value = result.transfer_code || '';
-                    document.getElementById('result_confirmation_code').value = result.confirmation_code || '';
-                } else {
-                    alert('Error: ' + response.statusText);
-                }
-            } catch (error) {
-                alert('An error occurred: ' + error.message);
+    xhr.onreadystatechange = function () {
+        if (xhr.readyState === XMLHttpRequest.DONE) {
+            if (xhr.status === 200) {
+                const result = JSON.parse(xhr.responseText);
+                document.getElementById('result_transfer_code').value = result.transfer_code || 'N/A';
+                document.getElementById('result_confirmation_code').value = result.confirmation_code || 'N/A';
+            } else {
+                alert('Error: ' + xhr.statusText);
+                console.error('Server Error:', xhr.status, xhr.statusText, xhr.responseText);
             }
+        }
+    };
+
+    xhr.onerror = function () {
+        alert('An error occurred during the request.');
+        console.error('Request failed:', xhr);
+    };
+
+    xhr.send(JSON.stringify(data));
+} catch (error) {
+    alert('An error occurred: ' + error.message);
+    console.error('Error:', error);
+}
+
+
+
         });
     </script>
 </body>
